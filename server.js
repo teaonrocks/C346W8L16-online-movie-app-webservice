@@ -40,7 +40,7 @@ app.post("/addmovie", async (req, res) => {
 	try {
 		let connection = await mysql.createConnection(dbConfig);
 		const [result] = await connection.execute(
-			"INSERT INTO defaultdb.watchlist (movie_title, genre, poster_url) VALUES (?, ?)",
+			"INSERT INTO defaultdb.watchlist (movie_title, genre, poster_url) VALUES (?, ?,?)",
 			[movie_title, genre, poster_url]
 		);
 		res
