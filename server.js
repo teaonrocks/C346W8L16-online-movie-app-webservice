@@ -40,7 +40,7 @@ app.post("/addmovie", async (req, res) => {
 	try {
 		let connection = await mysql.createConnection(dbConfig);
 		const [result] = await connection.execute(
-			"INSERT INTO defaultdb.watchlist (movie_title, genre, poster_url) VALUES (?, ?,?)",
+			"INSERT INTO defaultdb.watchlist (movie_title, genre, poster_url) VALUES (?, ?, ?)",
 			[movie_title, genre, poster_url]
 		);
 		res
@@ -48,6 +48,35 @@ app.post("/addmovie", async (req, res) => {
 			.json({ message: "Movie added successfully", movie_id: result.insertId });
 	} catch (error) {
 		res.status(500).json({ error: `Failed to add movie ${movie_title}` });
+		console.error(error);
+	}
+});
+
+app.delete("/deletemovie", async (req, res) => {
+	const { id } = req.body;
+	try {
+		let connection = await mysql.createConnection(dbConfig);
+		await connection.execute("DELETE FROM defaultdb.watchlist WHERE id = ?", [
+			id,
+		]);
+		res.json({ message: "Movie deleted successfully" });
+	} catch (error) {
+		res.status(500).json({ error: `Failed to delete movie ${id}` });
+		console.error(error);
+	}
+});
+
+app.put("/updatemovie", async (req, res) => {
+	const { id, movie_title, genre, poster_url } = req.body;
+	try {
+		let connection = await mysql.createConnection(dbConfig);
+		await connection.execute(
+			"UPDATE defaultdb.watchlist SET movie_title = ?, genre = ?, poster_url = ? WHERE id = ?",
+			[movie_title, genre, poster_url, id]
+		);
+		res.json({ message: "Movie updated successfully" });
+	} catch (error) {
+		res.status(500).json({ error: `Failed to update movie ${id}` });
 		console.error(error);
 	}
 });
